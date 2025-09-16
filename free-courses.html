@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Free Online Courses</title>
+  <style>
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f7fa; color: #222; margin: 0; }
+    .container { max-width: 900px; margin: 0 auto; padding: 32px 16px; }
+    h1 { color: #2a5298; text-align: center; margin-bottom: 32px; }
+    .course-list { display: flex; flex-wrap: wrap; gap: 24px; justify-content: center; }
+    .course-card { background: #fff; border-radius: 16px; box-shadow: 0 2px 8px rgba(42,82,152,0.08); padding: 20px; min-width: 260px; max-width: 320px; text-align: left; }
+    .course-card h2 { font-size: 1.1em; color: #2a5298; margin-bottom: 8px; }
+    .course-card a { color: #4caf50; text-decoration: underline; font-weight: bold; }
+    .provider { font-size: 0.95em; color: #888; margin-bottom: 8px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Top Free Online Courses</h1>
+    <div class="course-list">
+      <div class="course-card">
+        <h2><a href="https://online-learning.harvard.edu/catalog?price[]=Free" target="_blank">Harvard Free Courses</a></h2>
+        <div class="provider">Provider: Harvard University</div>
+        <div>Browse free courses in computer science, business, humanities, and more.</div>
+      </div>
+      <div class="course-card">
+        <h2><a href="https://education.oracle.com/oracle-free-training" target="_blank">Oracle Free Training</a></h2>
+        <div class="provider">Provider: Oracle</div>
+        <div>Free training in cloud, database, Java, and other Oracle technologies.</div>
+      </div>
+      <div class="course-card">
+        <h2><a href="https://www.coursera.org/courses?query=free" target="_blank">Coursera Free Courses</a></h2>
+        <div class="provider">Provider: Coursera</div>
+        <div>Popular free courses:
+          <ul>
+            <li><a href="https://www.coursera.org/learn/python-for-applied-data-science-ai" target="_blank">Python for Data Science, AI & Development (IBM)</a></li>
+            <li><a href="https://www.coursera.org/learn/financial-markets-global" target="_blank">Financial Markets (Yale University)</a></li>
+            <li><a href="https://www.coursera.org/learn/careerdevelopment" target="_blank">English for Career Development (University of Pennsylvania)</a></li>
+            <li><a href="https://www.coursera.org/learn/data-analysis-with-python" target="_blank">Data Analysis with Python (IBM)</a></li>
+            <li><a href="https://www.coursera.org/learn/cybersecurity-for-everyone" target="_blank">Cybersecurity for Everyone (University of Maryland)</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="course-card">
+        <h2><a href="https://www.edx.org/learn/free-courses" target="_blank">edX Free Courses</a></h2>
+        <div class="provider">Provider: edX</div>
+        <div>Browse free courses in AI, Python, Excel, Business, and more from top universities.</div>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <h1>Top Free Online Courses</h1>
+    <div class="course-list" id="courseList">
+      <!-- Static and admin-added courses will appear here -->
+    </div>
+  </div>
+  <script>
+    // Static courses
+    const staticCourses = [
+      {
+        title: 'Harvard Free Courses',
+        provider: 'Harvard University',
+        link: 'https://online-learning.harvard.edu/catalog?price[]=Free',
+        desc: 'Browse free courses in computer science, business, humanities, and more.'
+      },
+      {
+        title: 'Oracle Free Training',
+        provider: 'Oracle',
+        link: 'https://education.oracle.com/oracle-free-training',
+        desc: 'Free training in cloud, database, Java, and other Oracle technologies.'
+      },
+      {
+        title: 'Coursera Free Courses',
+        provider: 'Coursera',
+        link: 'https://www.coursera.org/courses?query=free',
+        desc: 'Popular free courses: Python for Data Science, Financial Markets, Career Development, Data Analysis, Cybersecurity.'
+      },
+      {
+        title: 'edX Free Courses',
+        provider: 'edX',
+        link: 'https://www.edx.org/learn/free-courses',
+        desc: 'Browse free courses in AI, Python, Excel, Business, and more from top universities.'
+      }
+    ];
+    function getAdminCourses() {
+      return JSON.parse(localStorage.getItem('adminFreeCourses') || '[]');
+    }
+    function renderCourses() {
+      const list = document.getElementById('courseList');
+      list.innerHTML = '';
+      [...staticCourses, ...getAdminCourses()].forEach(course => {
+        list.innerHTML += `<div class="course-card">
+          <h2><a href="${course.link}" target="_blank">${course.title}</a></h2>
+          <div class="provider">Provider: ${course.provider}</div>
+          <div>${course.desc}</div>
+        </div>`;
+      });
+    }
+    renderCourses();
+  </script>
+</body>
+</html>
+desc}</div>
+        </div>`;
+      });
+    }
+    renderCourses();
+  </script>
+</body>
+</html>

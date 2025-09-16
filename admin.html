@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>                      <script src=http://127.0.0.1:50529/IU9></script>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard - Chakri</title>
+
+  <link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2a5298">
+<link rel="icon" href="icon-192.png">
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js');
+  }
+</script>
+  
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f4f7fa;
+      color: #222;
+    }
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      padding: 32px;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 8px;
+        margin: 0;
+        border-radius: 0;
+        box-shadow: none;
+        max-width: 100vw;
+      }
+      h1, h2 {
+        font-size: 1.2em;
+      }
+      .post-job-form input, .post-job-form textarea {
+        font-size: 1em;
+        padding: 8px;
+      }
+      .job-card {
+        flex-direction: column;
+        gap: 8px;
+        padding: 10px;
+      }
+      .job-info {
+        width: 100%;
+      }
+      #analytics-metrics {
+        flex-direction: column;
+        gap: 12px;
+      }
+      #analytics-modal > div {
+        min-width: unset;
+        width: 98vw;
+        padding: 10px;
+      }
+      button, .post-job-form button {
+        width: 100%;
+        margin-bottom: 8px;
+        font-size: 1em;
+        padding: 12px 0;
+      }
+      #edit-job-modal > div {
+        min-width: unset;
+        width: 98vw;
+        padding: 10px;
+      }
+    }
+    h1 {
+      color: #2a5298;
+      margin-bottom: 24px;
+    }
+    .post-job-form input, .post-job-form textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 12px;
+      border-radius: 8px;
+      border: 1px solid #eaf0fa;
+      font-size: 1em;
+    }
+    .post-job-form button {
+      background: #2a5298;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 24px;
+      font-weight: bold;
+      margin-right: 8px;
+      cursor: pointer;
+    }
+    .job-list {
+      margin-top: 32px;
+    }
+    .job-card {
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      justify-content: space-between;
+    }
+    .job-info {
+      flex: 1;
+    }
+    .job-title {
+      font-weight: bold;
+      font-size: 1.1em;
+      margin-bottom: 4px;
+    }
+    .job-meta {
+      font-size: 0.95em;
+      color: #666;
+      margin-bottom: 4px;
+    }
+    .job-salary {
+      font-size: 0.95em;
+      color: #2a5298;
+      font-weight: bold;
+    }
+    .delete-btn {
+      background: #ff4444;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .home-Button{
+      font-style: italic;
+      background-color: #2a5298;
+      position: relative;
+      
+    }
+  </style>
+</head>
+<body>
+
+  <button id="home-Button" src="jobWebsite.html">HOME</button>
+  <div class="container">
+    <h1>Admin Dashboard</h1>
+    <div class="post-job-form">
+      <h2 style="color:#2a5298; margin-bottom:16px;">Post a New Job</h2>
+      <input type="text" id="job-title" placeholder="Job Title">
+      <input type="text" id="job-company" placeholder="Company">
+      <input type="text" id="job-location" placeholder="Location">
+      <input type="text" id="job-salary" placeholder="Salary">
+      <input type="text" id="job-type" placeholder="Type (Full-time, Part-time)">
+      <input type="text" id="job-logo" placeholder="Logo Emoji (e.g. 🟠)">
+      <input type="date" id="job-deadline" placeholder="Application Deadline" style="margin-bottom:12px;">
+      <textarea id="job-description" placeholder="Description (HTML allowed)"></textarea>
+      <textarea id="job-requirements" placeholder="Requirements (HTML allowed)"></textarea>
+      <button onclick="postJob()">Post Job</button>
+    </div>
+    <!-- Free Course Admin Form -->
+    <div class="post-job-form" style="margin-top:32px;">
+      <h2 style="color:#2a5298; margin-bottom:16px;">Add Free Course</h2>
+      <input type="text" id="course-title" placeholder="Course Title">
+      <input type="text" id="course-provider" placeholder="Provider">
+      <input type="url" id="course-link" placeholder="Course Link">
+      <textarea id="course-desc" placeholder="Description"></textarea>
+      <button onclick="addFreeCourse()">Add Free Course</button>
+    </div>
+    <div class="job-list" id="free-course-list">
+      <!-- Admin-added free courses will be listed here -->
+    </div>
+    <div class="job-list" id="job-list">
+      <!-- Jobs will be listed here -->
+    </div>
+    <div id="reported-list" style="margin-top:40px;"></div>
+    <div id="admin-tools" style="margin-top:40px;">
+      <h2 style="color:#2a5298;">Admin Moderation Tools</h2>
+      <button onclick="openAnalyticsModal()" style="background:#2a5298;color:#fff;border:none;border-radius:8px;padding:10px 24px;font-weight:bold;margin-bottom:18px;cursor:pointer;">View Analytics</button>
+      <h3>Reported Jobs</h3>
+      <div id="reported-jobs-list" style="margin-bottom:16px;"></div>
+      <h3>Manage Users</h3>
+      <div id="user-list" style="margin-bottom:16px;"></div>
+      <h3>Site Analytics</h3>
+      <div id="site-analytics" style="margin-bottom:8px;"></div>
+    </div>
+
+    <!-- Analytics Modal -->
+    <div id="analytics-modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(30,60,114,0.15); z-index:2001; align-items:center; justify-content:center;">
+      <div style="background:#fff; padding:32px; border-radius:16px; min-width:340px; max-width:90vw; box-shadow:0 2px 16px rgba(42,82,152,0.15); position:relative;">
+        <button onclick="closeAnalyticsModal()" style="position:absolute;top:16px;right:16px;background:#eee;color:#2a5298;border:none;border-radius:8px;padding:6px 16px;font-weight:bold;">Close</button>
+        <h2 style="color:#2a5298; margin-bottom:16px;">Admin Analytics Dashboard</h2>
+        <div id="analytics-metrics" style="display:flex;gap:24px;margin-bottom:24px;flex-wrap:wrap;"></div>
+        <canvas id="jobsChart" width="400" height="180" style="margin-bottom:24px;"></canvas>
+        <div id="analytics-activity"></div>
+      </div>
+    </div>
+    <div id="edit-job-modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(30,60,114,0.15); z-index:1000; align-items:center; justify-content:center;">
+      <div style="background:#fff; padding:32px; border-radius:16px; min-width:320px; box-shadow:0 2px 16px rgba(42,82,152,0.15);">
+        <h2 style="color:#2a5298; margin-bottom:16px;">Edit Job</h2>
+        <input type="text" id="edit-job-title" placeholder="Job Title" style="width:100%; padding:10px; margin-bottom:12px; border-radius:8px; border:1px solid #eaf0fa;">
+        <input type="text" id="edit-job-company" placeholder="Company" style="width:100%; padding:10px; margin-bottom:12px; border-radius:8px; border:1px solid #eaf0fa;">
+        <input type="text" id="edit-job-location" placeholder="Location" style="width:100%; padding:10px; margin-bottom:12px; border-radius:8px; border:1px solid #eaf0fa;">
+        <input type="text" id="edit-job-salary" placeholder="Salary" style="width:100%; padding:10px; margin-bottom:12px; border-radius:8px; border:1px solid #eaf0fa;">
+        <input type="text" id="edit-job-type" placeholder="Type (Full-time, Part-time)" style="width:100%; padding:10px; margin-bottom:12px; border-radius:8px; border:1px solid #eaf0fa;">
+        <input type="text" id="edit-job-logo" placeholder="Logo Emoji (e.g. 🟠)" style="width:100%; padding:10px; margin-bottom:12px; border-radius:8px; border:1px solid #eaf0fa;">
+        <input type="date" id="edit-job-deadline" placeholder="Application Deadline" style="margin-bottom:12px;">
+        <textarea id="edit-job-description" placeholder="Description (HTML allowed)" style="width:100%; padding:10px; margin-bottom:12px; border-radius:8px; border:1px solid #eaf0fa;"></textarea>
+        <textarea id="edit-job-requirements" placeholder="Requirements (HTML allowed)" style="width:100%; padding:10px; margin-bottom:12px; border-radius:8px; border:1px solid #eaf0fa;"></textarea>
+        <button onclick="saveEditJob()">Save</button>
+        <button onclick="closeEditJobModal()" style="margin-left:8px; background:#eee; color:#2a5298; border:none; border-radius:8px; padding:10px 24px; font-weight:bold;">Cancel</button>
+      </div>
+    </div>
+  </div>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    // --- Analytics Modal Logic ---
+    function openAnalyticsModal() {
+      document.getElementById('analytics-modal').style.display = 'flex';
+      renderAnalyticsDashboard();
+    }
+    function closeAnalyticsModal() {
+      document.getElementById('analytics-modal').style.display = 'none';
+    }
+    function renderAnalyticsDashboard() {
+      // Key metrics
+      const jobs = JSON.parse(localStorage.getItem('adminJobs') || '[]');
+      const reviews = JSON.parse(localStorage.getItem('companyReviews') || '{}');
+      const applications = JSON.parse(localStorage.getItem('jobApplications') || '[]');
+      let userSet = new Set();
+      Object.values(reviews).forEach(arr => arr.forEach(r => userSet.add(r.user)));
+      const metrics = [
+        { label: 'Total Jobs', value: jobs.length },
+        { label: 'Total Applications', value: applications.length },
+        { label: 'Total Reviews', value: Object.values(reviews).reduce((a,arr)=>a+arr.length,0) },
+        { label: 'Unique Users', value: userSet.size },
+      ];
+      document.getElementById('analytics-metrics').innerHTML = metrics.map(m => `<div style='background:#eaf0fa;padding:18px 24px;border-radius:12px;min-width:120px;text-align:center;'><div style='font-size:2em;font-weight:bold;color:#2a5298;'>${m.value}</div><div style='color:#222;font-size:1em;'>${m.label}</div></div>`).join('');
+
+      // Jobs posted over time (by date)
+      const dateCounts = {};
+      jobs.forEach(j => {
+        const d = j.postedDate || 'Unknown';
+        dateCounts[d] = (dateCounts[d]||0)+1;
+      });
+      const dates = Object.keys(dateCounts);
+      const counts = dates.map(d => dateCounts[d]);
+      // Chart.js
+      if(window.jobsChartObj) window.jobsChartObj.destroy();
+      const ctx = document.getElementById('jobsChart').getContext('2d');
+      window.jobsChartObj = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: dates,
+          datasets: [{
+            label: 'Jobs Posted',
+            data: counts,
+            backgroundColor: '#2a5298',
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { display: false } },
+          scales: { y: { beginAtZero: true } }
+        }
+      });
+
+      // Recent activity
+      let activity = '';
+      if(jobs.length) {
+        activity += `<div style='margin-bottom:8px;'><b>Latest Job:</b> ${jobs[jobs.length-1].title} at ${jobs[jobs.length-1].company}</div>`;
+      }
+      if(applications.length) {
+        activity += `<div style='margin-bottom:8px;'><b>Latest Application:</b> ${applications[applications.length-1].name} for job ID ${applications[applications.length-1].jobId}</div>`;
+      }
+      document.getElementById('analytics-activity').innerHTML = activity || '<div style="color:#888;">No recent activity.</div>';
+    }
+    // For demo, jobs are stored in localStorage
+    // Free Course Admin Logic
+    function getAdminCourses() {
+      return JSON.parse(localStorage.getItem('adminFreeCourses') || '[]');
+    }
+    function saveAdminCourses(courses) {
+      localStorage.setItem('adminFreeCourses', JSON.stringify(courses));
+    }
+    function renderAdminCourses() {
+      const list = document.getElementById('free-course-list');
+      const courses = getAdminCourses();
+      list.innerHTML = '<h2 style="color:#2a5298;">Admin Added Free Courses</h2>';
+      if (courses.length === 0) {
+        list.innerHTML += '<div style="color:#888;">No admin-added free courses yet.</div>';
+        return;
+      }
+      courses.forEach(course => {
+        list.innerHTML += `<div class="job-card">
+          <div class="job-info">
+            <div class="job-title"><a href="${course.link}" target="_blank">${course.title}</a></div>
+            <div class="job-meta">${course.provider}</div>
+            <div style="margin-top:8px;">${course.desc}</div>
+          </div>
+        </div>`;
+      });
+    }
+    function addFreeCourse() {
+      const title = document.getElementById('course-title').value.trim();
+      const provider = document.getElementById('course-provider').value.trim();
+      const link = document.getElementById('course-link').value.trim();
+      const desc = document.getElementById('course-desc').value.trim();
+      if (!title || !provider || !link || !desc) {
+        alert('Please fill all fields.');
+        return;
+      }
+      const courses = getAdminCourses();
+      courses.push({ title, provider, link, desc });
+      saveAdminCourses(courses);
+      renderAdminCourses();
+      document.getElementById('course-title').value = '';
+      document.getElementById('course-provider').value = '';
+      document.getElementById('course-link').value = '';
+      document.getElementById('course-desc').value = '';
+      alert('Course added! It will appear in Free Courses page.');
+    }
+    renderAdminCourses();
+    
+    function getJobs() {
+  return JSON.parse(localStorage.getItem('adminJobs') || '[]').map((job, idx) => ({
+    ...job,
+    id: idx + 1,
+  }));
+}
+
+
+    function saveJobs(jobs) {
+      localStorage.setItem('adminJobs', JSON.stringify(jobs));
+    }
+    let editJobIndex = null;
+    function renderJobs() {
+      const jobs = getJobs();
+      const reportedJobs = JSON.parse(localStorage.getItem('reportedJobs') || '[]');
+      const jobList = document.getElementById('job-list');
+      jobList.innerHTML = '<h2 style="color:#2a5298;">Posted Jobs</h2>';
+      if (jobs.length === 0) {
+        jobList.innerHTML += '<div style="color:#888;">No jobs posted yet.</div>';
+        return;
+      }
+      jobs.forEach((job, idx) => {
+        const isReported = reportedJobs.includes(idx + 1);
+        jobList.innerHTML += `
+          <div class="job-card">
+            <div class="job-info">
+              <div class="job-title">${job.title}</div>
+              <div class="job-meta">${job.company} &bull; ${job.location} &bull; ${job.type}</div>
+              <div class="job-salary">${job.salary}</div>
+              <div style=\"color:#888; font-size:0.95em; margin-top:8px;\">Posted: ${job.postedDate ? job.postedDate : 'N/A'}${job.deadline ? ` | Deadline: ${job.deadline}` : ''}</div>
+              ${isReported ? '<div style="color:#ff4444; font-weight:bold; margin-top:8px;">Reported</div>' : ''}
+            </div>
+            <button class="delete-btn" onclick="deleteJob(${idx})">Delete</button>
+            <button class="delete-btn" style="background:#2a5298; margin-left:8px;" onclick="editJob(${idx})">Edit</button>
+          </div>
+        `;
+      });
+    }
+    function renderReportedJobs() {
+      const jobs = getJobs();
+      const reportedJobs = JSON.parse(localStorage.getItem('reportedJobs') || '[]');
+      const reportedList = document.getElementById('reported-list');
+      reportedList.innerHTML = '<h2 style="color:#ff4444;">Reported Posts</h2>';
+      const reported = jobs.filter((_, idx) => reportedJobs.includes(idx + 1));
+      if (reported.length === 0) {
+        reportedList.innerHTML += '<div style="color:#888;">No posts have been reported.</div>';
+        return;
+      }
+      reported.forEach((job, idx) => {
+        reportedList.innerHTML += `
+          <div class="job-card" style="border:2px solid #ff4444;">
+            <div class="job-info">
+              <div class="job-title">${job.title}</div>
+              <div class="job-meta">${job.company} &bull; ${job.location} &bull; ${job.type}</div>
+              <div class="job-salary">${job.salary}</div>
+              <div style=\"color:#888; font-size:0.95em; margin-top:8px;\">Posted: ${job.postedDate ? job.postedDate : 'N/A'}${job.deadline ? ` | Deadline: ${job.deadline}` : ''}</div>
+            </div>
+          </div>
+        `;
+      });
+    }
+    function postJob() {
+      const title = document.getElementById('job-title').value;
+      const company = document.getElementById('job-company').value;
+      const location = document.getElementById('job-location').value;
+      const salary = document.getElementById('job-salary').value;
+      const type = document.getElementById('job-type').value;
+      const logo = document.getElementById('job-logo').value || '🟦';
+      const description = document.getElementById('job-description').value;
+      const requirements = document.getElementById('job-requirements').value;
+      const deadline = document.getElementById('job-deadline').value;
+      const postedDate = new Date().toLocaleDateString();
+      if (!title || !company || !location || !salary || !type || !description || !requirements || !deadline) {
+        alert('Please fill all fields.');
+        return;
+      }
+      const jobs = getJobs();
+      jobs.push({
+        title,
+        company,
+        location,
+        salary,
+        type,
+        logo,
+        description,
+        requirements,
+        postedDate,
+        deadline
+      });
+      saveJobs(jobs);
+      renderJobs();
+      document.getElementById('job-title').value = '';
+      document.getElementById('job-company').value = '';
+      document.getElementById('job-location').value = '';
+      document.getElementById('job-salary').value = '';
+      document.getElementById('job-type').value = '';
+      document.getElementById('job-logo').value = '';
+      document.getElementById('job-description').value = '';
+      document.getElementById('job-requirements').value = '';
+      document.getElementById('job-deadline').value = '';
+      alert('Job posted successfully!');
+    }
+    function deleteJob(idx) {
+      const jobs = getJobs();
+      jobs.splice(idx, 1);
+      saveJobs(jobs);
+      renderJobs();
+    }
+    function editJob(idx) {
+      const jobs = getJobs();
+      const job = jobs[idx];
+      editJobIndex = idx;
+      document.getElementById('edit-job-title').value = job.title;
+      document.getElementById('edit-job-company').value = job.company;
+      document.getElementById('edit-job-location').value = job.location;
+      document.getElementById('edit-job-salary').value = job.salary;
+      document.getElementById('edit-job-type').value = job.type;
+      document.getElementById('edit-job-logo').value = job.logo;
+      document.getElementById('edit-job-description').value = job.description;
+      document.getElementById('edit-job-requirements').value = job.requirements;
+      document.getElementById('edit-job-deadline').value = job.deadline || '';
+      document.getElementById('edit-job-modal').style.display = 'flex';
+    }
+    function closeEditJobModal() {
+      document.getElementById('edit-job-modal').style.display = 'none';
+    }
+    function saveEditJob() {
+      const jobs = getJobs();
+      if (editJobIndex === null) return;
+      jobs[editJobIndex] = {
+        ...jobs[editJobIndex],
+        title: document.getElementById('edit-job-title').value,
+        company: document.getElementById('edit-job-company').value,
+        location: document.getElementById('edit-job-location').value,
+        salary: document.getElementById('edit-job-salary').value,
+        type: document.getElementById('edit-job-type').value,
+        logo: document.getElementById('edit-job-logo').value,
+        description: document.getElementById('edit-job-description').value,
+        requirements: document.getElementById('edit-job-requirements').value,
+        deadline: document.getElementById('edit-job-deadline').value
+      };
+      saveJobs(jobs);
+      renderJobs();
+      closeEditJobModal();
+      editJobIndex = null;
+      alert('Job updated successfully!');
+    }
+    renderJobs();
+    renderReportedJobs();
+    // --- Moderation Tools ---
+    function renderAdminReportedJobs() {
+  const jobs = getJobs();
+  const reportedJobs = JSON.parse(localStorage.getItem('reportedJobs') || '[]');
+  const container = document.getElementById('reported-jobs-list');
+  if (!reportedJobs.length) {
+    container.innerHTML = '<div style="color:#888;">No reported jobs.</div>';
+    return;
+  }
+  container.innerHTML = reportedJobs.map(id => {
+    const job = jobs.find(j => j.id === id);
+    if (!job) return '';
+    return `<div style='border-bottom:1px solid #eee;padding:8px 0;'>
+      <span style='font-weight:bold;'>${job.title}</span> at <span style='color:#2a5298;'>${job.company}</span> (${job.location})
+      <button onclick='adminRemoveJob(${id})' style='background:#ff4444;color:#fff;border:none;border-radius:8px;padding:4px 12px;font-weight:bold;margin-left:12px;'>Remove</button>
+      <button onclick='adminDismissReport(${id})' style='background:#eee;color:#2a5298;border:none;border-radius:8px;padding:4px 12px;font-weight:bold;margin-left:8px;'>Dismiss</button>
+    </div>`;
+  }).join('');
+}
+
+
+    // Moderation: Review reported jobs
+    function renderAdminReportedJobs() {
+      const jobs = getJobs();
+      const reportedJobs = JSON.parse(localStorage.getItem('reportedJobs') || '[]');
+      const container = document.getElementById('reported-jobs-list');
+      if (!reportedJobs.length) {
+        container.innerHTML = '<div style="color:#888;">No reported jobs.</div>';
+        return;
+      }
+      container.innerHTML = reportedJobs.map(id => {
+        const job = jobs.find(j => j.id === id);
+        if (!job) return '';
+        return `<div style='border-bottom:1px solid #eee;padding:8px 0;'>
+          <span style='font-weight:bold;'>${job.title}</span> at <span style='color:#2a5298;'>${job.company}</span> (${job.location})
+          <button onclick='adminRemoveJob(${job.id})' style='background:#ff4444;color:#fff;border:none;border-radius:8px;padding:4px 12px;font-weight:bold;margin-left:12px;'>Remove</button>
+          <button onclick='adminDismissReport(${job.id})' style='background:#eee;color:#2a5298;border:none;border-radius:8px;padding:4px 12px;font-weight:bold;margin-left:8px;'>Dismiss</button>
+        </div>`;
+      }).join('');
+    }
+    function adminRemoveJob(id) {
+      let jobs = getJobs();
+      jobs = jobs.filter(j => j.id !== id);
+      saveJobs(jobs);
+      let reportedJobs = JSON.parse(localStorage.getItem('reportedJobs') || '[]');
+      reportedJobs = reportedJobs.filter(jid => jid !== id);
+      localStorage.setItem('reportedJobs', JSON.stringify(reportedJobs));
+      renderAdminReportedJobs();
+      renderJobs();
+      alert('Job removed.');
+    }
+    function adminDismissReport(id) {
+      let reportedJobs = JSON.parse(localStorage.getItem('reportedJobs') || '[]');
+      reportedJobs = reportedJobs.filter(jid => jid !== id);
+      localStorage.setItem('reportedJobs', JSON.stringify(reportedJobs));
+      renderAdminReportedJobs();
+      alert('Report dismissed.');
+    }
+    // Moderation: Manage users (shows users who left reviews)
+    function renderAdminUserList() {
+      const allReviews = JSON.parse(localStorage.getItem('companyReviews') || '{}');
+      const users = new Set();
+      Object.values(allReviews).forEach(revs => revs.forEach(r => users.add(r.user)));
+      const container = document.getElementById('user-list');
+      if (!users.size) {
+        container.innerHTML = '<div style="color:#888;">No users found.</div>';
+        return;
+      }
+      container.innerHTML = Array.from(users).map(u => `<div style='border-bottom:1px solid #eee;padding:8px 0;'>${u} <button onclick='adminRemoveUser("${u}")' style='background:#ff4444;color:#fff;border:none;border-radius:8px;padding:4px 12px;font-weight:bold;margin-left:12px;'>Remove</button></div>`).join('');
+    }
+    function adminRemoveUser(user) {
+      const allReviews = JSON.parse(localStorage.getItem('companyReviews') || '{}');
+      Object.keys(allReviews).forEach(company => {
+        allReviews[company] = allReviews[company].filter(r => r.user !== user);
+      });
+      localStorage.setItem('companyReviews', JSON.stringify(allReviews));
+      renderAdminUserList();
+      alert('User and their reviews removed.');
+    }
+    // Analytics: Show basic site usage
+    function renderAdminSiteAnalytics() {
+      const jobsCount = getJobs().length;
+      const reviews = JSON.parse(localStorage.getItem('companyReviews') || '{}');
+      let reviewCount = 0;
+      Object.values(reviews).forEach(arr => reviewCount += arr.length);
+      const reportedJobs = JSON.parse(localStorage.getItem('reportedJobs') || '[]').length;
+      document.getElementById('site-analytics').innerHTML = `
+        <div>Total Jobs: <b>${jobsCount}</b></div>
+        <div>Total Reviews: <b>${reviewCount}</b></div>
+        <div>Reported Jobs: <b>${reportedJobs}</b></div>
+      `;
+    }
+    // Initial moderation render
+    renderAdminModeration();
+    
+    
+    
+    // Render Job Applications
+function renderApplications() {
+  const applications = JSON.parse(localStorage.getItem('jobApplications') || '[]');
+  const jobs = getJobs();
+  const container = document.createElement('div');
+  container.innerHTML = '<h2 style="color:#2a5298;margin-top:32px;">Job Applications</h2>';
+  if (!applications.length) {
+    container.innerHTML += '<div style="color:#888;">No applications submitted yet.</div>';
+  } else {
+    applications.forEach((app, idx) => {
+      const job = jobs.find(j => j.id === app.jobId) || { title: 'Unknown Job' };
+      container.innerHTML += `
+        <div class="job-card">
+          <div class="job-info">
+            <div class="job-title">${job.title}</div>
+            <div class="job-meta">Applicant: ${app.name} &bull; Email: ${app.email}</div>
+            <div style="margin-top:8px;"><a href="${app.resume}" target="_blank" style="color:#2a5298;text-decoration:underline;">View Resume</a></div>
+            <div style="margin-top:8px;">Cover Letter: ${app.cover}</div>
+            <div style="color:#888;font-size:0.95em;margin-top:8px;">Submitted: ${app.date}</div>
+          </div>
+          <button class="delete-btn" onclick="deleteApplication(${idx})">Delete</button>
+        </div>
+      `;
+    });
+  }
+  document.getElementById('admin-tools').appendChild(container);
+}
+
+// Delete Application
+function deleteApplication(idx) {
+  const applications = JSON.parse(localStorage.getItem('jobApplications') || '[]');
+  applications.splice(idx, 1);
+  localStorage.setItem('jobApplications', JSON.stringify(applications));
+  renderApplications();
+}
+
+// Call renderApplications on page load
+renderApplications();
+
+function renderAdminModeration() {
+  renderAdminReportedJobs();
+  renderAdminUserList();
+  renderAdminSiteAnalytics();
+  renderApplications();
+}
+
+    
+  </script>
+</body>
+</html>

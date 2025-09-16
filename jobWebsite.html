@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>                      
+  <meta charset="UTF-8">
+  <title>Josh's - Job Search</title>
+  
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f4f7fa;
+      color: #222;
+    }
+   
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav .logo {
+      font-size: 1.6em;
+      font-weight: bold;
+      letter-spacing: 2px;
+    }
+    .nav ul {
+      list-style: none;
+      display: flex;
+      gap: 32px;
+      margin: 0;
+      padding: 0;
+    }
+    .nav ul li {
+      cursor: pointer;
+      font-size: 1em;
+    }
+    .nav .login-btn {
+      background: #fff;
+      color: #2a5298;
+      border: none;
+      border-radius: 20px;
+      padding: 8px 24px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .admin-btn {
+      background: #ffcc00;
+      color: #222;
+      border: none;
+      border-radius: 20px;
+      padding: 8px 24px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .search-bar {
+      display: flex;
+      gap: 16px;
+      margin: 32px 0 16px 0;
+      align-items: center;
+    }
+    .search-bar input, .search-bar button {
+      padding: 12px 16px;
+      border-radius: 20px;
+      border: none;
+      font-size: 1em;
+    }
+    .search-bar input {
+      flex: 1;
+      background: #eaf0fa;
+      margin-right: 8px;
+    }
+    .search-bar button {
+      background: #2a5298;
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .filters {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+    .filter-btn {
+      background: #eaf0fa;
+      color: #2a5298;
+      border: none;
+      border-radius: 20px;
+      padding: 8px 20px;
+      cursor: pointer;
+      font-size: 0.95em;
+      transition: background 0.2s;
+    }
+    .main-content {
+      display: flex;
+      gap: 32px;
+    }
+    .job-list {
+      flex: 1;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      padding: 24px;
+      min-width: 320px;
+    }
+    .job-card {
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      cursor: pointer;
+      transition: box-shadow 0.2s;
+    }
+    .job-card:hover {
+      box-shadow: 0 4px 16px rgba(42,82,152,0.08);
+    }
+    .job-logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2em;
+    }
+    .job-info {
+      flex: 1;
+    }
+    .job-title {
+      font-weight: bold;
+      font-size: 1.1em;
+      margin-bottom: 4px;
+    }
+    .job-meta {
+      font-size: 0.95em;
+      color: #666;
+      margin-bottom: 4px;
+    }
+
+    .job-salary {
+      font-size: 0.95em;
+      color: #2a5298;
+      font-weight: bold;
+    }
+
+    .apply-btn {
+      background: #2a5298;
+      color: #fff;
+      border: none;
+      border-radius: 20px;
+      padding: 8px 20px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .job-details {
+      flex: 2;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      padding: 24px;
+      min-width: 400px;
+    }
+
+    .job-details .job-title {
+      font-size: 1.3em;
+      margin-bottom: 8px;
+    }
+
+    .job-details .job-meta {
+      margin-bottom: 12px;
+    }
+
+    .job-details .badges {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .badge {
+      background: #eaf0fa;
+      color: #2a5298;
+      border-radius: 12px;
+      padding: 4px 12px;
+      font-size: 0.9em;
+      font-weight: bold;
+    }
+
+    .badge.new { background: #4caf50; color: #fff; }
+    .badge.urgent { background: #ff9800; color: #fff; }
+    .job-details .apply-btn {
+      margin-bottom: 16px;
+
+    }
+
+    .job-details h3 {
+      margin-top: 24px;
+      margin-bottom: 8px;
+      font-size: 1.1em;
+      color: #2a5298;
+    }
+
+    .job-details ul {
+      margin: 0 0 16px 20px;
+      padding: 0;
+      font-size: 0.98em;
+    }
+    
+    .similar-jobs {
+      margin-top: 32px;
+    }
+    .similar-jobs h4 {
+      margin-bottom: 8px;
+      color: #2a5298;
+    }
+    .similar-list {
+      display: flex;
+      gap: 16px;
+    }
+    .similar-card {
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 12px;
+      min-width: 120px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+      text-align: center;
+      font-size: 0.95em;
+    }
+    footer {
+      background: #1e3c72;
+      color: #fff;
+      padding: 24px 0;
+      margin-top: 48px;
+      text-align: center;
+      font-size: 0.95em;
+      border-radius: 0 0 16px 16px;
+    }
+    @media (max-width: 900px) {
+      .main-content {
+        flex-direction: column;
+      }
+      .job-details {
+        min-width: unset;
+        margin-top: 24px;
+      }
+    }
+    .admin-modal {
+      display: flex;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(30,60,114,0.15);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    .post-job-form {
+      display: none;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      padding: 24px;
+      max-width: 500px;
+      margin: 32px auto;
+    }
+  </style>
+</head>
+<body>
+  <header>
+  <!-- Create Alert feature removed -->
+    <div class="container nav">
+      <div class="logo">Josh's <span style="font-size:0.7em;">job posts</span></div>
+      <ul>
+        <li>Job Seekers</li>
+        <li>Employers</li>
+        <li>Post a Job</li>
+      </ul>
+      <button class="login-btn" onclick="showLoginModal()">Log in</button>
+      <button class="admin-btn" onclick="showAdminLogin()">Admin Login</button>
+    </div>
+    <!-- Free Course Banner Start -->
+    <div style="width:100%; display:flex; justify-content:center; margin:18px 0;">
+      <a href="free-courses.html" style="
+        background: linear-gradient(90deg, #4caf50 0%, #2a5298 100%);
+        color: #fff;
+        padding: 12px 32px;
+        border-radius: 24px;
+        font-size: 1.15em;
+        font-weight: bold;
+        box-shadow: 0 2px 8px rgba(42,82,152,0.10);
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;">
+        🎓 Free Courses: Harvard, Oracle, Coursera, edX & more!
+      </a>
+    </div>
+    <!-- Free Course Banner End -->
+    <div class="container">
+      <div class="search-bar">
+        <input type="text" id="search-role" placeholder="Delivery boy">
+        <input type="text" id="search-location" placeholder="New York, USA">
+        <button onclick="searchJobs()">Search</button>
+      </div>
+    <div style="color:#eaf0fa; font-size:1em; margin-bottom:8px;">
+      3,525 Jobs found for "Delivery boy" at "New York, USA."
+    </div>
+    <!-- Filters removed as requested -->
+  </div>
+
+  <div class="container main-content">
+    <!-- Alert button moved to header -->
+    <div class="job-list" id="job-list">
+      <!-- Job cards will be injected here -->
+      <!-- Social Sharing and Company Profile Example -->
+    </div>
+    <div class="job-details" id="job-details">
+      <!-- Job details will be injected here -->
+      <div style="color:#888;">Select a job to see details.</div>
+    </div>
+  </div>
+  <div id="admin-modal" class="admin-modal" style="display:none;">
+    <div style="background:#fff; padding:32px; border-radius:16px; min-width:320px; box-shadow:0 2px 16px rgba(42,82,152,0.15);">
+      <h2 style="color:#2a5298; margin-bottom:16px;">Admin Login</h2>
+      <input type="password" id="admin-password" placeholder="Enter admin password" style="width:100%; padding:10px; margin-bottom:16px; border-radius:8px; border:1px solid #eaf0fa;">
+      <button onclick="adminLogin()" style="background:#2a5298; color:#fff; border:none; border-radius:8px; padding:10px 24px; font-weight:bold;">Login</button>
+      <button onclick="closeAdminModal()" style="margin-left:8px; background:#eee; color:#2a5298; border:none; border-radius:8px; padding:10px 24px; font-weight:bold;">Cancel</button>
+      <div id="admin-error" style="color:red; margin-top:8px; display:none;">Wrong password!</div>
+    </div>
+  </div>
+  <div id="admin-tools" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(30,60,114,0.10); z-index:1001; align-items:center; justify-content:center;">
+    <div style="background:#fff; padding:32px; border-radius:16px; min-width:400px; max-width:90vw; box-shadow:0 2px 16px rgba(42,82,152,0.15);">
+      <h2 style="color:#2a5298; margin-bottom:16px;">Admin Moderation Tools</h2>
+      <button onclick="closeAdminTools()" style="float:right; background:#eee; color:#2a5298; border:none; border-radius:8px; padding:6px 16px; font-weight:bold;">Close</button>
+      <div style="clear:both;"></div>
+      <h3 style="margin-top:16px;">Reported Jobs</h3>
+      <div id="reported-jobs-list" style="margin-bottom:16px;"></div>
+      <h3>Manage Users</h3>
+      <div id="user-list" style="margin-bottom:16px;"></div>
+      <h3>Site Analytics</h3>
+      <div id="site-analytics" style="margin-bottom:8px;"></div>
+    </div>
+  </div>
+  <div id="post-job-form" class="post-job-form">
+    <h2 style="color:#2a5298; margin-bottom:16px;">Post a New Job</h2>
+    <input type="text" id="job-title" placeholder="Job Title" style="width:100%; padding:10px; margin-bottom:12px; border-radius:8px; border:1px solid #eaf0fa;">
+    <input type="text" id="job-company" placeholder="Company" style="width:100%; padding:10px; margin-bottom:12px; border-radius:8px; border:1px solid #eaf0fa;">
+    <input type="text" id="job-location" placeholder="Location" style="width:100%; padding:10px; margin-bottom:12px; border-radius:8px; border:1px solid #eaf0fa;">
+    <input type="text" id="job-salary" placeholder="Salary" style="width:100%; padding:10px; margin-bottom:12px; border-radius:8px; border:1px solid #eaf0fa;">
+    <input type="text" id="job-type" placeholder="Type (Full-time, Part-time)" style="width:100%; padding:10px; margin-bottom:12px; border-radius:8px; border:1px solid #eaf0fa;">
+    <input type="text" id="job-logo" placeholder="Logo Emoji (e.g. 🟠)" style="width:100%; padding:10px; margin-bottom:12px; border-radius:8px; border:1px solid #eaf0fa;">
+    <textarea id="job-description" placeholder="Description (HTML allowed)" style="width:100%; padding:10px; margin-bottom:12px; border-radius:8px; border:1px solid #eaf0fa;"></textarea>
+    <textarea id="job-requirements" placeholder="Requirements (HTML allowed)" style="width:100%; padding:10px; margin-bottom:12px; border-radius:8px; border:1px solid #eaf0fa;"></textarea>
+    <input type="date" id="job-deadline" placeholder="Deadline" style="width:100%; padding:10px; margin-bottom:12px; border-radius:8px; border:1px solid #eaf0fa;">
+    <button onclick="postJob()" style="background:#2a5298; color:#fff; border:none; border-radius:8px; padding:10px 24px; font-weight:bold;">Post Job</button>
+    <button onclick="closePostJobForm()" style="margin-left:8px; background:#eee; color:#2a5298; border:none; border-radius:8px; padding:10px 24px; font-weight:bold;">Cancel</button>
+  </div>
+  <footer>
+    &copy; 2025 Chakri. All rights reserved. | Career | Help Center | Guidelines
+  </footer>
+  <script>
+  // Create Alert feature removed
+
+    // Load jobs from localStorage (admin posted jobs) and merge with default jobs
+    function loadAllJobs() {
+      const adminJobs = JSON.parse(localStorage.getItem('adminJobs') || '[]');
+      const formattedAdminJobs = adminJobs.map((job, idx) => ({
+        id: jobs.length + idx + 1,
+        company: job.company,
+        logo: job.logo || '🟦',
+        title: job.title,
+        location: job.location,
+        salary: job.salary,
+        type: job.type,
+        badges: ['New'],
+        description: job.description,
+        requirements: job.requirements,
+        similar: [],
+        postedDate: job.postedDate || new Date().toLocaleDateString(),
+        deadline: job.deadline
+      }));
+      // For default jobs, set postedDate to today's date
+      const today = new Date().toLocaleDateString();
+      const formattedDefaultJobs = jobs.map(j => ({ ...j, postedDate: today }));
+      return formattedDefaultJobs.concat(formattedAdminJobs);
+    }
+
+    function renderJobs() {
+      const jobList = document.getElementById('job-list');
+      jobList.innerHTML = '';
+      const allJobs = loadAllJobs();
+      allJobs.forEach(job => {
+        jobList.innerHTML += `
+          <div class="job-card" onclick="showJobDetails(${job.id})">
+            <div class="job-logo">${job.logo}</div>
+            <div class="job-info">
+              <div class="job-title">${job.title}</div>
+              <div class="job-meta">${job.location} &bull; ${job.type}</div>
+              <div class="job-salary">${job.salary}</div>
+              <div style="margin-top:8px;">
+                <a href="#" onclick="event.stopPropagation();alert('Company profile coming soon!')" style="color:#2a5298;text-decoration:underline;font-size:0.95em;">View Company Profile</a>
+              </div>
+              <div style="margin-top:8px;">
+                <button onclick="event.stopPropagation();shareJob('${job.title}','${job.company}')" style="background:#eaf0fa;color:#2a5298;border:none;border-radius:12px;padding:4px 12px;font-size:0.95em;cursor:pointer;">Share</button>
+              </div>
+            </div>
+            <button class="apply-btn" onclick="event.stopPropagation(); alert('Apply for ${job.title}');">Apply Now</button>
+          </div>
+        `;
+      });
+    }
+    function shareJob(title, company) {
+      const url = window.location.href;
+      const text = `Check out this job: ${title} at ${company} - ${url}`;
+      if (navigator.share) {
+        navigator.share({ title: title, text: text, url: url });
+      } else {
+        alert('Share: ' + text);
+      }
+    }
+    // Modern login modal
+    function showLoginModal() {
+      if (document.getElementById('login-modal')) {
+        document.getElementById('login-modal').style.display = 'flex';
+        return;
+      }
+      const modal = document.createElement('div');
+      modal.id = 'login-modal';
+      modal.style = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(30,60,114,0.10);z-index:2000;display:flex;align-items:center;justify-content:center;';
+      modal.innerHTML = `
+        <div style="display:flex;max-width:820px;width:95vw;height:520px;background:#fff;border-radius:24px;box-shadow:0 8px 32px rgba(30,60,114,0.10);overflow:hidden;">
+          <div style="flex:1;padding:48px 40px 40px 40px;display:flex;flex-direction:column;justify-content:center;">
+            <div style="margin-bottom:32px;">
+              <img src='https://img.icons8.com/ios-filled/50/000000/user-male-circle.png' alt='logo' style='width:36px;height:36px;opacity:0.7;margin-bottom:12px;'>
+              <h2 style='font-size:2em;font-weight:700;margin:0 0 8px 0;color:#222;'>Welcome Back!</h2>
+              <div style='color:#888;font-size:1.08em;margin-bottom:18px;'>Please enter log in details below</div>
+            </div>
+            <div style='width:100%;margin-bottom:18px;'>
+              <label style='font-size:0.98em;color:#222;font-weight:500;'>Email</label>
+              <input id='user-email' type='email' placeholder='Zahra.uix@gmail.com' style='width:100%;margin-top:6px;padding:12px 16px;border-radius:10px;border:1.5px solid #eaeaea;font-size:1em;outline:none;transition:border 0.2s;'>
+            </div>
+            <div style='width:100%;margin-bottom:8px;'>
+              <label style='font-size:0.98em;color:#222;font-weight:500;'>Password</label>
+              <input id='user-password' type='password' placeholder='••••••••' style='width:100%;margin-top:6px;padding:12px 16px;border-radius:10px;border:1.5px solid #eaeaea;font-size:1em;outline:none;transition:border 0.2s;'>
+            </div>
+            <div style='width:100%;display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;'>
+              <span></span>
+              <a href='#' style='color:#2a5298;font-size:0.98em;text-decoration:none;'>Forgot password?</a>
+            </div>
+            <button onclick='loginUser()' style='width:100%;background:#111;color:#fff;border:none;border-radius:10px;padding:14px 0;font-size:1.1em;font-weight:600;box-shadow:0 2px 8px rgba(0,0,0,0.04);margin-bottom:18px;cursor:pointer;'>Sign in</button>
+            <div style='text-align:center;color:#aaa;font-size:1em;margin-bottom:18px;'>or continue</div>
+            <button onclick='googleLogin()' style='width:100%;background:#fff;border:1.5px solid #eaeaea;border-radius:10px;padding:12px 0;font-size:1.08em;font-weight:500;display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer;'>
+              <img src='https://img.icons8.com/color/24/000000/google-logo.png' style='width:22px;height:22px;'> Log in with Google
+            </button>
+            <div style='text-align:center;color:#888;font-size:0.98em;margin-top:22px;'>Don't have an account? <a href='#' style='color:#2a5298;font-weight:600;text-decoration:none;'>Sign Up</a></div>
+            <div id='login-error' style='color:red;margin-top:12px;display:none;text-align:center;'>Invalid credentials!</div>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#181a23;position:relative;">
+            <div style='width:90%;margin:0 auto;display:flex;flex-direction:column;align-items:center;'>
+              <img src='https://assets-global.website-files.com/63e4e8e7e7b7e2b1e6e7e7e7/63e4e8e7e7b7e2b1e6e7e7e8_3d-illustration.png' alt='3d illustration' style='width:220px;height:220px;margin-bottom:24px;border-radius:18px;'>
+              <div style='color:#fff;font-size:1.25em;font-weight:600;text-align:center;margin-bottom:8px;'>Manage your Money Anywhere</div>
+              <div style='color:#bdbdbd;font-size:1em;text-align:center;'>you can Manage your Money on the go with Quicken on the web</div>
+              <div style='margin-top:32px;display:flex;justify-content:center;gap:6px;'>
+                <span style='display:inline-block;width:10px;height:10px;background:#fff;border-radius:50%;opacity:0.7;'></span>
+                <span style='display:inline-block;width:10px;height:10px;background:#fff;border-radius:50%;opacity:0.3;'></span>
+                <span style='display:inline-block;width:10px;height:10px;background:#fff;border-radius:50%;opacity:0.3;'></span>
+              </div>
+            </div>
+          </div>
+          <button onclick='closeLoginModal()' style='position:absolute;top:18px;right:18px;background:transparent;border:none;font-size:2em;color:#888;cursor:pointer;' title='Close'>&times;</button>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+    function closeLoginModal() {
+      const modal = document.getElementById('login-modal');
+      if (modal) modal.style.display = 'none';
+    }
+    function loginUser() {
+      const email = document.getElementById('user-email').value;
+      const password = document.getElementById('user-password').value;
+      if (email && password) {
+        closeLoginModal();
+        alert('Logged in as ' + email);
+      } else {
+        document.getElementById('login-error').style.display = 'block';
+      }
+    }
+    function googleLogin() {
+      alert('Google login coming soon!');
+    }
+    
+
+    // Add report button in job details
+    function showJobDetails(id) {
+  const allJobs = loadAllJobs();
+  const job = allJobs.find(j => j.id === id);
+  if (!job) return;
+  const details = document.getElementById('job-details');
+  const reviews = getCompanyReviews(job.company);
+  const avgRating = reviews.length ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1) : 'N/A';
+  details.innerHTML = `
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <div>
+        <div class="job-title">${job.title}</div>
+        <div class="job-meta">${job.company} &bull; ${job.location} &bull; ${job.type}</div>
+      </div>
+      <button class="apply-btn" style="background:#ff4444;" onclick="reportJob(${job.id})">Report</button>
+    </div>
+    <div class="badges">
+      ${job.badges.map(b => `<span class="badge ${b.toLowerCase()}">${b}</span>`).join('')}
+    </div>
+    <div class="job-salary">${job.salary}</div>
+    <button class="apply-btn" onclick="showApplyForm(${job.id})">Apply Now</button>
+    <h3>Descriptions</h3>
+    ${job.description}
+    <h3>Requirements</h3>
+    ${job.requirements}
+    <h3 style="margin-top:24px;">Company Reviews & Ratings</h3>
+    <div style="margin-bottom:8px;">Average Rating: <span style="color:#4caf50;font-weight:bold;">${avgRating}</span> / 5 (${reviews.length} reviews)</div>
+    <div id="company-reviews">
+      ${reviews.length ? reviews.map(r => `<div style='border-bottom:1px solid #eee;padding:8px 0;'><span style='color:#4caf50;font-weight:bold;'>${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</span> <span style='color:#222;'>${r.text}</span> <span style='color:#888;font-size:0.9em;'>- ${r.user}</span></div>`).join('') : '<div style="color:#888;">No reviews yet.</div>'}
+    </div>
+    <div style="margin-top:12px;">
+      <label for="review-rating">Your Rating:</label>
+      <select id="review-rating">
+        <option value="5">5</option>
+        <option value="4">4</option>
+        <option value="3">3</option>
+        <option value="2">2</option>
+        <option value="1">1</option>
+      </select>
+      <input type="text" id="review-user" placeholder="Your name" style="margin-left:8px;padding:4px 8px;border-radius:8px;border:1px solid #eaf0fa;">
+      <input type="text" id="review-text" placeholder="Your review" style="margin-left:8px;padding:4px 8px;border-radius:8px;border:1px solid #eaf0fa;width:180px;">
+      <button onclick="submitReview('${job.company}')" style="background:#4caf50;color:#fff;border:none;border-radius:8px;padding:6px 16px;font-weight:bold;margin-left:8px;">Submit</button>
+    </div>
+    <div class="similar-jobs">
+      <h4>Similar Jobs</h4>
+      <div class="similar-list">
+        ${job.similar && job.similar.length > 0 ? job.similar.map(sid => {
+          const sjob = allJobs.find(j => j.id === sid);
+          return sjob ? `<div class="similar-card">${sjob.logo}<br>${sjob.company}<br><span style="font-size:0.9em;">${sjob.location}</span></div>` : '';
+        }).join('') : '<div style="color:#888;">No similar jobs.</div>'}
+      </div>
+    </div>
+    <div style="display:flex; justify-content:flex-end; align-items:center; margin-top:24px;">
+      <span style="color:#888; font-size:0.95em;">Posted: ${job.postedDate ? job.postedDate : 'N/A'}</span>
+      ${job.deadline ? `<span style="margin-left:24px; color:#ff9800; font-size:0.95em;">Deadline: ${job.deadline}</span>` : ''}
+    </div>
+  `;
+}
+          
+          
+        
+    // Get reviews for a company
+    function getCompanyReviews(company) {
+      const allReviews = JSON.parse(localStorage.getItem('companyReviews') || '{}');
+      return allReviews[company] || [];
+    }
+    // Submit a review
+    function submitReview(company) {
+      const rating = parseInt(document.getElementById('review-rating').value);
+      const user = document.getElementById('review-user').value.trim() || 'Anonymous';
+      const text = document.getElementById('review-text').value.trim();
+      if (!text) {
+        alert('Please enter your review.');
+        return;
+      }
+      const allReviews = JSON.parse(localStorage.getItem('companyReviews') || '{}');
+      if (!allReviews[company]) allReviews[company] = [];
+      allReviews[company].push({ rating, user, text });
+      localStorage.setItem('companyReviews', JSON.stringify(allReviews));
+      showJobDetails(loadAllJobs().find(j => j.company === company).id);
+      alert('Thank you for your review!');
+    }
+
+    function reportJob(id) {
+      let reportedJobs = JSON.parse(localStorage.getItem('reportedJobs') || '[]');
+      if (!reportedJobs.includes(id)) {
+        reportedJobs.push(id);
+        localStorage.setItem('reportedJobs', JSON.stringify(reportedJobs));
+        alert('Report submitted. The post will be reviewed by the admin.');
+      } else {
+        alert('You have already reported this job.');
+      }
+    }
+
+    function searchJobs() {
+      // For demo, just re-render jobs. Add real search logic as needed.
+      renderJobs();
+      document.getElementById('job-details').innerHTML = '<div style="color:#888;">Select a job to see details.</div>';
+    }
+
+    let isAdmin = false;
+    function showAdminLogin() {
+      document.getElementById('admin-modal').style.display = 'flex';
+    }
+    function closeAdminModal() {
+      document.getElementById('admin-modal').style.display = 'none';
+      document.getElementById('admin-error').style.display = 'none';
+    }
+    function adminLogin() {
+      const password = document.getElementById('admin-password').value;
+      if (password === 'admin123') {
+        isAdmin = true;
+        closeAdminModal();
+        // Redirect to admin.html for full dashboard
+        window.location.href = 'admin.html';
+      } else {
+        document.getElementById('admin-error').style.display = 'block';
+      }
+    }
+    function showAdminTools() {
+      document.getElementById('admin-tools').style.display = 'flex';
+      renderReportedJobs();
+      renderUserList();
+      renderSiteAnalytics();
+    }
+    function closeAdminTools() {
+      document.getElementById('admin-tools').style.display = 'none';
+    }
+    // Moderation: Review reported jobs
+    function renderReportedJobs() {
+      const reportedJobs = JSON.parse(localStorage.getItem('reportedJobs') || '[]');
+      const allJobs = loadAllJobs();
+      const container = document.getElementById('reported-jobs-list');
+      if (!reportedJobs.length) {
+        container.innerHTML = '<div style="color:#888;">No reported jobs.</div>';
+        return;
+      }
+      container.innerHTML = reportedJobs.map(id => {
+        const job = allJobs.find(j => j.id === id);
+        if (!job) return '';
+        return `<div style='border-bottom:1px solid #eee;padding:8px 0;'>
+          <span style='font-weight:bold;'>${job.title}</span> at <span style='color:#2a5298;'>${job.company}</span> (${job.location})
+          <button onclick='removeJob(${job.id})' style='background:#ff4444;color:#fff;border:none;border-radius:8px;padding:4px 12px;font-weight:bold;margin-left:12px;'>Remove</button>
+          <button onclick='dismissReport(${job.id})' style='background:#eee;color:#2a5298;border:none;border-radius:8px;padding:4px 12px;font-weight:bold;margin-left:8px;'>Dismiss</button>
+        </div>`;
+      }).join('');
+    }
+    function removeJob(id) {
+      let adminJobs = JSON.parse(localStorage.getItem('adminJobs') || '[]');
+      adminJobs = adminJobs.filter(j => j.id !== id);
+      localStorage.setItem('adminJobs', JSON.stringify(adminJobs));
+      let reportedJobs = JSON.parse(localStorage.getItem('reportedJobs') || '[]');
+      reportedJobs = reportedJobs.filter(jid => jid !== id);
+      localStorage.setItem('reportedJobs', JSON.stringify(reportedJobs));
+      renderReportedJobs();
+      renderJobs();
+      alert('Job removed.');
+    }
+    function dismissReport(id) {
+      let reportedJobs = JSON.parse(localStorage.getItem('reportedJobs') || '[]');
+      reportedJobs = reportedJobs.filter(jid => jid !== id);
+      localStorage.setItem('reportedJobs', JSON.stringify(reportedJobs));
+      renderReportedJobs();
+      alert('Report dismissed.');
+    }
+    // Moderation: Manage users (demo, shows users who left reviews)
+    function renderUserList() {
+      const allReviews = JSON.parse(localStorage.getItem('companyReviews') || '{}');
+      const users = new Set();
+      Object.values(allReviews).forEach(revs => revs.forEach(r => users.add(r.user)));
+      const container = document.getElementById('user-list');
+      if (!users.size) {
+        container.innerHTML = '<div style="color:#888;">No users found.</div>';
+        return;
+      }
+      container.innerHTML = Array.from(users).map(u => `<div style='border-bottom:1px solid #eee;padding:8px 0;'>${u} <button onclick='removeUser("${u}")' style='background:#ff4444;color:#fff;border:none;border-radius:8px;padding:4px 12px;font-weight:bold;margin-left:12px;'>Remove</button></div>`).join('');
+    }
+    function removeUser(user) {
+      const allReviews = JSON.parse(localStorage.getItem('companyReviews') || '{}');
+      Object.keys(allReviews).forEach(company => {
+        allReviews[company] = allReviews[company].filter(r => r.user !== user);
+      });
+      localStorage.setItem('companyReviews', JSON.stringify(allReviews));
+      renderUserList();
+      alert('User and their reviews removed.');
+    }
+    // Analytics: Show basic site usage
+    function renderSiteAnalytics() {
+      const jobsCount = loadAllJobs().length;
+      const reviews = JSON.parse(localStorage.getItem('companyReviews') || '{}');
+      let reviewCount = 0;
+      Object.values(reviews).forEach(arr => reviewCount += arr.length);
+      const reportedJobs = JSON.parse(localStorage.getItem('reportedJobs') || '[]').length;
+      document.getElementById('site-analytics').innerHTML = `
+        <div>Total Jobs: <b>${jobsCount}</b></div>
+        <div>Total Reviews: <b>${reviewCount}</b></div>
+        <div>Reported Jobs: <b>${reportedJobs}</b></div>
+      `;
+    }
+    function closePostJobForm() {
+      document.getElementById('post-job-form').style.display = 'none';
+    }
+    
+    function postJob() {
+  const title = document.getElementById('job-title').value;
+  const company = document.getElementById('job-company').value;
+  const location = document.getElementById('job-location').value;
+  const salary = document.getElementById('job-salary').value;
+  const type = document.getElementById('job-type').value;
+  const logo = document.getElementById('job-logo').value || '🟦';
+  const description = document.getElementById('job-description').value;
+  const requirements = document.getElementById('job-requirements').value;
+  const deadline = document.getElementById('job-deadline').value;
+  const postedDate = new Date().toLocaleDateString();
+  if (!title || !company || !location || !salary || !type || !description || !requirements) {
+    alert('Please fill all fields.');
+    return;
+  }
+  const adminJobs = JSON.parse(localStorage.getItem('adminJobs') || '[]');
+  adminJobs.push({
+    id: loadAllJobs().length + 1,
+    company,
+    logo,
+    title,
+    location,
+    salary,
+    type,
+    badges: ['New'],
+    description,
+    requirements,
+    postedDate,
+    deadline,
+    similar: []
+  });
+  localStorage.setItem('adminJobs', JSON.stringify(adminJobs));
+  renderJobs();
+  closePostJobForm();
+  // notifyJobAlert removed
+  alert('Job posted successfully!');
+}
+
+    // Initial render
+    renderJobs();
+    
+    // Show Application Form Modal
+function showApplyForm(jobId) {
+  const allJobs = loadAllJobs();
+  const job = allJobs.find(j => j.id === jobId);
+  if (!job) return;
+  const modal = document.createElement('div');
+  modal.id = 'apply-modal';
+  modal.style = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(30,60,114,0.15);z-index:2000;display:flex;align-items:center;justify-content:center;';
+  modal.innerHTML = `
+    <div style="background:#fff;padding:32px;border-radius:16px;min-width:320px;max-width:500px;box-shadow:0 2px 16px rgba(42,82,152,0.15);">
+      <h2 style="color:#2a5298;margin-bottom:16px;">Apply for ${job.title}</h2>
+      <input type="text" id="apply-name" placeholder="Full Name" style="width:100%;padding:10px;margin-bottom:12px;border-radius:8px;border:1px solid #eaf0fa;">
+      <input type="email" id="apply-email" placeholder="Email Address" style="width:100%;padding:10px;margin-bottom:12px;border-radius:8px;border:1px solid #eaf0fa;">
+      <input type="url" id="apply-resume" placeholder="Resume Link (e.g., Google Drive)" style="width:100%;padding:10px;margin-bottom:12px;border-radius:8px;border:1px solid #eaf0fa;">
+      <textarea id="apply-cover" placeholder="Cover Letter" style="width:100%;padding:10px;margin-bottom:12px;border-radius:8px;border:1px solid #eaf0fa;min-height:100px;"></textarea>
+      <button onclick="submitApplication(${jobId})" style="background:#2a5298;color:#fff;border:none;border-radius:8px;padding:10px 24px;font-weight:bold;">Submit Application</button>
+      <button onclick="closeApplyModal()" style="margin-left:8px;background:#eee;color:#2a5298;border:none;border-radius:8px;padding:10px 24px;font-weight:bold;">Cancel</button>
+      <div id="apply-error" style="color:red;margin-top:8px;display:none;">Please fill all fields.</div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+}
+
+// Close Application Form Modal
+function closeApplyModal() {
+  const modal = document.getElementById('apply-modal');
+  if (modal) modal.remove();
+}
+
+// Submit Application
+function submitApplication(jobId) {
+  const name = document.getElementById('apply-name').value.trim();
+  const email = document.getElementById('apply-email').value.trim();
+  const resume = document.getElementById('apply-resume').value.trim();
+  const cover = document.getElementById('apply-cover').value.trim();
+  if (!name || !email || !resume || !cover) {
+    document.getElementById('apply-error').style.display = 'block';
+    return;
+  }
+  const applications = JSON.parse(localStorage.getItem('jobApplications') || '[]');
+  applications.push({
+    jobId,
+    name,
+    email,
+    resume,
+    cover,
+    date: new Date().toLocaleString(),
+  });
+  localStorage.setItem('jobApplications', JSON.stringify(applications));
+  closeApplyModal();
+  alert('Application submitted successfully!');
+}
+  </script>
+</body>
+</html>

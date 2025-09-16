@@ -1,0 +1,21 @@
+{
+  "name": "Chakri Admin Dashboard",
+  "short_name": "ChakriAdmin",
+  "start_url": "./admin.html",
+  "display": "standalone",
+  "background_color": "#f4f7fa",
+  "theme_color": "#2a5298",
+  "description": "Admin dashboard for Chakri job site.",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
